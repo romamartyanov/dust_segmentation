@@ -1,6 +1,7 @@
 import os
 import argparse
 import time
+import gc
 
 import cv2
 import torch
@@ -20,14 +21,16 @@ warnings.filterwarnings("ignore")
 def parse_args():
     """Input arguments parsing."""
     parser = argparse.ArgumentParser()
+    parser.add_argument('--timer', type=int, default=30,
+                        help="Timer for benchmark.")
     parser.add_argument('--dataset_path', type=str, default="test_data_tiff/train/image/",
                         help='Path to test dataset.')
-    parser.add_argument('--model_path', type=str, default="experiments/test_exp/Unet_efficientnet_b1_best_epoch.pth",
+    parser.add_argument('--model_path', type=str,
                         help='Path to model weights. If None - dummy weights will be used.')
     parser.add_argument('--export_dir', default="saved_masks/", type=str,
-                        help='Export directory.')
+                        help='Export directory for segmentation masks.')
     parser.add_argument('--bechmark', default=True, type=bool,
-                        help="Run performance test. Without data 'bechmark' mode will use synthetic data.")
+                        help="Run performance test. Without data 'bechmark' mode will use noisy data.")
     return parser.parse_args()
 
 
@@ -97,11 +100,15 @@ def inference_bechmark(compiled_model, output_layer, timer=30):
             num_pieces_hor, num_pieces_ver
         )
         img_end = time.time()
-        laps.append(img_end - img_start)
+        img_time = img_end - img_start
+        print("Img time:", img_time)
+        laps.append(img_time)
+        gc.collect()
+
     laps = np.array(laps)
 
     print(
-        "Results:\n"
+        "\nResults:\n"
         f"Timer: {timer} sec.\n"
         f"Number of processed images: {laps.size}\n"
         f"Mean time for pipeline: {np.mean(laps)}\n"
@@ -152,7 +159,7 @@ def main():
         raise ValueError(
             "Please, provide data for testing in 'dataset_path' argument and "
             "path for segmentation masks in 'export_dir' argument."
-            "Or choose 'bechmark' mode. Without data 'bechmark' mode will use synthetic data."
+            "Or choose 'bechmark' mode. 'bechmark' mode will use noisy data."
         )
 
     seed_everything(CFG.seed)
@@ -172,7 +179,7 @@ def main():
     ir_model, output_layer = init_openvino_session(ir_path)
 
     if args.bechmark:
-        inference_bechmark(ir_model, output_layer)
+        inference_bechmark(ir_model, output_layer, args.timer)
     else:
         inference(ir_model, output_layer, args.dataset_path, args.export_dir)
 
