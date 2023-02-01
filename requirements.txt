@@ -1,0 +1,9 @@
+opencv-python
+numpy
+torch
+torchvision
+timm
+openvino-dev
+albumentations
+matplotlib
+colorama
