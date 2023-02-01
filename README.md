@@ -113,11 +113,12 @@ For dataset collection I will provide the following steps:
 For possible improvement I can suggest several possible improvements to this solution:
 
 1. More gently setup training params and augmentations.
-2. Try to use `einops.rearrange` for image cutting if it will give performance Improvements.
-3. Convert model into `INT8` format. This solution  [requers Calibration Dataset](https://docs.openvino.ai/latest/notebooks/114-quantization-simplified-mode-with-output.html#compression-stage).
-4. Try [Model Pruning](https://pytorch.org/tutorials/intermediate/pruning_tutorial.html#iterative-pruning) in order to accelerate inference pipeline.
-5. Implement simple inpainting techniques, for example [with OpenCV](https://docs.opencv.org/3.4/df/d3d/tutorial_py_inpainting.html) [[documentation](https://docs.opencv.org/3.4/d7/d8b/group__photo__inpaint.html#gaedd30dfa0214fec4c88138b51d678085)].
-6. Provide deployment pipeline with `Docker` or/and `Redis`
+2. Add an extra check at the joints of the pieces, if there is a dust spot at these joints
+3. Try to use `einops.rearrange` for image cutting if it will give performance Improvements.
+4. Convert model into `INT8` format. This solution  [requers Calibration Dataset](https://docs.openvino.ai/latest/notebooks/114-quantization-simplified-mode-with-output.html#compression-stage).
+5. Try [Model Pruning](https://pytorch.org/tutorials/intermediate/pruning_tutorial.html#iterative-pruning) in order to accelerate inference pipeline.
+6. Implement simple inpainting techniques, for example [with OpenCV](https://docs.opencv.org/3.4/df/d3d/tutorial_py_inpainting.html) [[documentation](https://docs.opencv.org/3.4/d7/d8b/group__photo__inpaint.html#gaedd30dfa0214fec4c88138b51d678085)].
+7. Provide deployment pipeline with `Docker` or/and `Redis`
 
 
 During my research I found few possible solutions for this and neighboring tasks:
